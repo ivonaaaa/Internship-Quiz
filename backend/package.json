@@ -1,9 +1,14 @@
 {
+  "type": "module",
   "devDependencies": {
     "@nestjs/cli": "^11.0.5",
-    "prisma": "^6.5.0"
+    "prisma": "^6.5.0",
+    "ts-node": "^10.9.2"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0"
+  },
+  "prisma": {
+    "seed": "node --loader ts-node/esm prisma/seed.mjs"
   }
 }
