@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  password String
+  role     Role    @default(USER)
+  score    Int     @default(0)
+
+  @@map("users")
+}
+
+model Category {
+  id    String @id @default(uuid())
+  name  String @unique
+  image String
+
+  quizzes Quiz[]
+  
+  @@map("categories")
+}
+
+model Quiz {
+  id         String     @id @default(uuid())
+  title      String
+  categoryId String
+  category   Category   @relation(fields: [categoryId], references: [id])
+  type       QuizType
+  questions  Question[]
+  
+  @@map("quizzes")
+}
+
+model Question {
+  id      String  @id @default(uuid())
+  text    String
+  quizId  String
+  quiz    Quiz    @relation(fields: [quizId], references: [id])
+  answers Answer[]
+
+  @@map("questions")
+}
+
+model Answer {
+  id         String  @id @default(uuid())
+  text       String
+  isCorrect  Boolean @default(false)
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
+
+  @@map("answers")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum QuizType {
+  TRUE_FALSE
+  MULTIPLE_CHOICE
+  FILL_IN_THE_BLANKS
+}
