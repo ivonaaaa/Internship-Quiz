@@ -11,7 +11,10 @@ export class QuizController {
   }
 
   @Post(':id/submit')
-  async submitQuiz(@Param('id') id: string, @Body() answers: any) {
-    return this.quizService.submitQuiz(id, answers);
+  async submitQuiz(
+    @Param('id') quizId: string,
+    @Body() body: { userId: string; answers: any },
+  ) {
+    return this.quizService.submitQuiz(body.userId, quizId, body.answers);
   }
 }

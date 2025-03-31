@@ -1,5 +1,6 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AdminAuthGuard extends AuthGuard('jwt') {
@@ -11,6 +12,6 @@ export class AdminAuthGuard extends AuthGuard('jwt') {
 
     const { user } = context.switchToHttp().getRequest();
 
-    return user.role === 'admin';
+    return user.role === Role.ADMIN;
   }
 }
