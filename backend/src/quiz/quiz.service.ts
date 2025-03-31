@@ -47,6 +47,12 @@ export class QuizService {
     return quiz;
   }
 
+  async getAnswersByQuestionId(questionId: string) {
+    return this.prisma.answer.findMany({
+      where: { questionId },
+    });
+  }
+
   async submitQuiz(userId: string, quizId: string, answers: any) {
     const quiz = await this.prisma.quiz.findUnique({
       where: { id: quizId },
@@ -82,7 +88,7 @@ export class QuizService {
   async getUserQuizAttempts(userId: string) {
     return this.prisma.quizResult.findMany({
       where: { userId },
-      include: { quiz: true },
+      include: { user: true, quiz: true },
     });
   }
 

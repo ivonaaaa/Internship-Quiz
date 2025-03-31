@@ -15,6 +15,10 @@ export class UserService {
     private readonly jwtService: JwtService,
   ) {}
 
+  async getAllUsers() {
+    return this.prisma.user.findMany();
+  }
+
   async register(email: string, password: string) {
     const existingUser = await this.prisma.user.findUnique({
       where: {

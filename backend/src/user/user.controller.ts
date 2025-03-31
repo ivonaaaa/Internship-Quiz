@@ -1,10 +1,15 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get()
+  async getAllUsers() {
+    return this.userService.getAllUsers();
+  }
 
   @Post('register')
   register(@Body() { email, password }: RegisterDto) {
@@ -15,6 +20,4 @@ export class UserController {
   login(@Body() { email, password }: LoginDto) {
     return this.userService.login(email, password);
   }
-
-  //je li ode dohvacam score nekog usera?
 }
