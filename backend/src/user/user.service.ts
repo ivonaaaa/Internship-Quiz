@@ -6,6 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { PrismaService } from '../../prisma/prisma.service';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -22,7 +23,7 @@ export class UserService {
     });
 
     if (existingUser) {
-      throw new BadRequestException('User already exists');
+      throw new BadRequestException('User already exists!');
     }
 
     const hashedPassword = await hash(password, 10);
@@ -32,6 +33,7 @@ export class UserService {
         email,
         password: hashedPassword,
         username: email.split('@')[0],
+        role: Role.USER,
       },
     });
 
@@ -54,29 +56,25 @@ export class UserService {
     });
 
     if (!user) {
-      throw new BadRequestException('User does not exist');
+      throw new BadRequestException('User does not exist!');
     }
 
     const isPasswordValid = await compare(password, user.password);
+    console.log(isPasswordValid);
 
     if (!isPasswordValid) {
-      throw new ForbiddenException('Password not valid');
+      throw new ForbiddenException('Password not valid!');
     }
 
     const payload = {
       id: user.id,
       email: user.email,
-      role: user.isAdmin ? 'admin' : 'user',
+      username: user.username,
+      role: user.role,
     };
 
     return {
       token: this.jwtService.sign(payload),
     };
   }
-
-  //! znaci trebala bi dodat username u shemu
-  //! prominit mozda admin u bool value?
-  //! dodato dto-ve za login i registraciju
-
-  //! prvovjeri za quiz jel ok sve isto i onda ponovno migrirat
 }
