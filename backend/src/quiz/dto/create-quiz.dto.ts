@@ -4,22 +4,31 @@ import {
   IsArray,
   ValidateNested,
   IsEnum,
+  IsBoolean,
 } from '@nestjs/class-validator';
 import { Type } from '@nestjs/class-transformer';
 import { QuizType } from '@prisma/client';
+import { ApiProperty } from '@nestjs/swagger';
 
 class CreateAnswerDto {
+  @ApiProperty({ description: 'Answer text' })
   @IsString()
   text: string;
 
-  @IsEnum([true, false])
+  @ApiProperty({ description: 'Indicates if the answer is correct' })
+  @IsBoolean()
   isCorrect: boolean;
 }
 
 class CreateQuestionDto {
+  @ApiProperty({ description: 'Question text' })
   @IsString()
   text: string;
 
+  @ApiProperty({
+    type: [CreateAnswerDto],
+    description: 'List of possible answers',
+  })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateAnswerDto)
@@ -27,15 +36,22 @@ class CreateQuestionDto {
 }
 
 export class CreateQuizDto {
+  @ApiProperty({ description: 'Title of the quiz' })
   @IsString()
   title: string;
 
+  @ApiProperty({ description: 'Category ID for the quiz' })
   @IsUUID()
   categoryId: string;
 
+  @ApiProperty({ enum: QuizType, description: 'Type of the quiz' })
   @IsEnum(QuizType)
   type: QuizType;
 
+  @ApiProperty({
+    type: [CreateQuestionDto],
+    description: 'List of questions in the quiz',
+  })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateQuestionDto)
