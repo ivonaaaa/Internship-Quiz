@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-//import { routes } from "../constants/routes";
-import { Layout } from "../pages/Layout";
-// import NotFound from "../pages/HomePage";
-// import NotFound from "../pages/QuizPage";
+import { routes } from "../constants/routes";
+import PrivateRoute from "../hoc/PrivateRoute";
+import LoginPage from "../pages/LoginPage";
+import RegisterPage from "../pages/RegisterPage";
 import NotFound from "../pages/404Page";
 import ErrorBoundary from "../components/ErrorBoundary";
 
@@ -11,8 +11,10 @@ const AppRouter = () => {
     <BrowserRouter>
       <ErrorBoundary>
         <Routes location={location} key={location.pathname}>
-          <Route element={<Layout />}>
-            {/* kad implementiram stranice cu ovo odkomentirat */}
+          <Route path={routes.LOGIN} element={<LoginPage />} />
+          <Route path={routes.REGISTER} element={<RegisterPage />} />
+
+          <Route element={<PrivateRoute />}>
             {/* <Route path={routes.QUIZZES} element={<QuizzesPage />} /> */}
             {/* <Route path={routes.QUIZ} element={<QuizPage />} /> */}
             <Route path="*" element={<NotFound />} />

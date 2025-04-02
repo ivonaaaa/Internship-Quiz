@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchQuizResults } from "../../services/api";
+import { fetchQuizResults } from "../../services/quizApi";
 
 export const useQuizResults = (quizId: string) => {
   const [quizResults, setQuizResults] = useState([]);

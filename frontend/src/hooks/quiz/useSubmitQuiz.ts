@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { submitQuiz } from "../../services/api";
+import { submitQuiz } from "../../services/quizApi";
 
 export const useSubmitQuiz = () => {
   const [loading, setLoading] = useState(false);

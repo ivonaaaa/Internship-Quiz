@@ -1,35 +1,26 @@
 import { useState } from "react";
-import { API_BASE_URL } from "../../constants/constants";
+import { createQuiz as createQuizApi } from "../../services/quizApi";
 
-export const useCreateQuiz = () => {
+const useCreateQuiz = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<any>(null);
 
   const createQuiz = async (quizData: any, token: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/quiz`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(quizData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create quiz!");
-      }
-
-      return await response.json();
+      const result = await createQuizApi(quizData, token);
+      setData(result);
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Failed to create quiz!");
     } finally {
       setLoading(false);
     }
   };
 
-  return { createQuiz, loading, error };
+  return { createQuiz, data, loading, error };
 };
+
+export default useCreateQuiz;

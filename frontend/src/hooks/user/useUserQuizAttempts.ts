@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchUserQuizAttempts } from "../../services/api";
+import { fetchUserQuizAttempts } from "../../services/userApi";
 
 export const useUserQuizAttempts = (userId: string) => {
   const [attempts, setAttempts] = useState([]);

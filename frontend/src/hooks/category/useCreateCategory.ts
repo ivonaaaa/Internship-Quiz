@@ -1,35 +1,29 @@
 import { useState } from "react";
-import { API_BASE_URL } from "../../constants/constants";
+import { createCategory as createCategoryApi } from "../../services/categoryApi";
 
-export const useCreateCategory = () => {
+const useCreateCategory = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<any>(null);
 
-  const createCategory = async (categoryData: any, token: string) => {
+  const createCategory = async (
+    categoryData: { name: string; image: string },
+    token: string
+  ) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/category`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(categoryData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create category!");
-      }
-
-      return await response.json();
+      const result = await createCategoryApi(categoryData, token);
+      setData(result);
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Failed to create category!");
     } finally {
       setLoading(false);
     }
   };
 
-  return { createCategory, loading, error };
+  return { createCategory, data, loading, error };
 };
+
+export default useCreateCategory;
