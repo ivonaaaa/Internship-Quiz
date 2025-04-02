@@ -3,7 +3,7 @@ export type Routes = {
 };
 
 export const routes: Routes = {
-  HOME: "/",
+  QUIZZES: "/",
   QUIZ: "/quiz-page",
   NOT_FOUND: "*",
 };
