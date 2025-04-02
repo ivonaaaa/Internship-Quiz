@@ -3,6 +3,8 @@ import { routes } from "../constants/routes";
 import PrivateRoute from "../hoc/PrivateRoute";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
+import QuizzesPage from "../pages/QuizzesPage";
+import QuizPage from "../pages/QuizPage";
 import NotFound from "../pages/404Page";
 import ErrorBoundary from "../components/ErrorBoundary";
 
@@ -15,8 +17,8 @@ const AppRouter = () => {
           <Route path={routes.REGISTER} element={<RegisterPage />} />
 
           <Route element={<PrivateRoute />}>
-            {/* <Route path={routes.QUIZZES} element={<QuizzesPage />} /> */}
-            {/* <Route path={routes.QUIZ} element={<QuizPage />} /> */}
+            <Route path={routes.QUIZZES} element={<QuizzesPage />} />
+            <Route path={routes.QUIZ} element={<QuizPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
