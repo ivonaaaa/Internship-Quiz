@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { fetchQuizzes } from "../../services/quizApi";
+import { Quiz } from "../../types/QuizType";
 
 export const useQuizzes = () => {
-  const [quizzes, setQuizzes] = useState([]);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

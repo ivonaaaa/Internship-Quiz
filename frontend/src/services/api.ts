@@ -3,7 +3,7 @@ import { API_BASE_URL } from "../constants/constants";
 const handleRequest = async (
   endpoint: string,
   method: string,
-  body: object,
+  body?: object,
   token?: string
 ) => {
   try {
@@ -13,7 +13,9 @@ const handleRequest = async (
         "Content-Type": "application/json",
         ...(token && { Authorization: `Bearer ${token}` }),
       },
-      body: JSON.stringify(body),
+      ...(method !== "GET" &&
+        method !== "HEAD" &&
+        body && { body: JSON.stringify(body) }),
     });
 
     const data = await response.json();
