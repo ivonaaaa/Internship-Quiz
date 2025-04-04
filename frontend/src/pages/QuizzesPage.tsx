@@ -1,52 +1,118 @@
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import Navigation from "../components/Navigation";
 import Headline from "../components/Headline";
 import QuizList from "../components/QuizList";
 import AdminControls from "../components/AdminControls";
 import { useQuizzes } from "../hooks/quiz/useQuizzes";
+import { useQuizzesByCategory } from "../hooks/quiz/useQuizzesByCategory";
 import { useCategories } from "../hooks/category/useCategories";
 import { useAuth } from "../hooks/user/useAuth";
 import { Quiz } from "../types/QuizType";
 import "../styles/pages/Quizzes.css";
 
 const QuizzesPage = () => {
-  const { quizzes, loading, error } = useQuizzes();
+  const { role, user } = useAuth();
   const {
     categories,
     loading: categoriesLoading,
     error: categoriesError,
   } = useCategories();
-  const { role, user } = useAuth();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
+  const categoryId = searchParams.get("category") || "";
+  const {
+    quizzes: allQuizzes,
+    loading: loadingAll,
+    error: errorAll,
+  } = useQuizzes();
+  const {
+    quizzes: categoryQuizzes,
+    loading: loadingCategory,
+    error: errorCategory,
+  } = useQuizzesByCategory(categoryId);
 
-  const filteredQuizzes: Quiz[] = quizzes.filter((quiz) =>
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = (categoryId?: string) => {
+    setAnchorEl(null);
+    if (categoryId) setSearchParams({ category: categoryId });
+    else setSearchParams({});
+  };
+
+  const quizzesToShow: Quiz[] =
+    categoryId && categoryQuizzes.length > 0
+      ? categoryQuizzes
+      : !categoryId
+      ? allQuizzes
+      : [];
+
+  const filteredQuizzes: Quiz[] = quizzesToShow.filter((quiz) =>
     quiz.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const isLoading = categoryId ? loadingCategory : loadingAll;
+  const isError = categoryId ? errorCategory : errorAll;
 
   return (
     <>
       <img
         src="/assets/images/headline-background.jpg"
         className="background-image"
-      ></img>
+      />
       <Navigation />
-      {user && <Headline user={user} />}{" "}
+      {user && <Headline user={user} />}
       <Box sx={{ padding: "2rem" }}>
         {role === "ADMIN" && <AdminControls />}
-        <Button variant="outlined">Filter by Category</Button>
 
-        {loading && <CircularProgress />}
+        <Button
+          variant="outlined"
+          sx={{ margin: "20px" }}
+          onClick={handleClick}
+        >
+          Filter by Category
+        </Button>
+
+        <Menu anchorEl={anchorEl} open={open} onClose={() => handleClose()}>
+          <MenuItem onClick={() => handleClose(undefined)}>All</MenuItem>
+          {categories.map((category) => (
+            <MenuItem
+              key={category.id}
+              onClick={() => handleClose(category.id)}
+            >
+              {category.name}
+            </MenuItem>
+          ))}
+        </Menu>
+
+        {isLoading && <CircularProgress />}
         {categoriesLoading && <CircularProgress />}
-        {error && <Typography color="error">{error}</Typography>}
+        {isError && <Typography color="error">{isError}</Typography>}
         {categoriesError && (
           <Typography color="error">{categoriesError}</Typography>
         )}
 
-        {!loading && !categoriesLoading && !error && !categoriesError && (
-          <QuizList quizzes={filteredQuizzes} categories={categories} />
-        )}
+        {!isLoading &&
+          !categoriesLoading &&
+          !isError &&
+          !categoriesError &&
+          (filteredQuizzes.length > 0 ? (
+            <QuizList quizzes={filteredQuizzes} categories={categories} />
+          ) : (
+            <Typography>No quizzes available for this category.</Typography>
+          ))}
       </Box>
     </>
   );

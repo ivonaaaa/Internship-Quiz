@@ -15,15 +15,26 @@ const Navigation = () => {
     <Box
       component="form"
       onSubmit={handleSearch}
-      sx={{ display: "flex", gap: 2, padding: 2, justifyContent: "center" }}
+      sx={{
+        display: "flex",
+        gap: 2,
+        width: "50%",
+        margin: "0 auto",
+        padding: "0.6rem 2rem",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: "8px",
+        backgroundColor: "#7754AF55",
+      }}
     >
       <TextField
         label="Search Quizzes"
         variant="outlined"
+        size="small"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <Button type="submit" variant="contained">
+      <Button type="submit" variant="contained" size="small">
         Search
       </Button>
     </Box>

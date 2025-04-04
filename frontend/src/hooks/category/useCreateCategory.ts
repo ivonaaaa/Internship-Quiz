@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { createCategory as createCategoryApi } from "../../services/categoryApi";
+import { useCategories } from "./useCategories";
 
 const useCreateCategory = () => {
+  const { categories, setCategories } = useCategories();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<any>(null);
 
   const createCategory = async (
     categoryData: { name: string; image: string },
@@ -14,8 +15,8 @@ const useCreateCategory = () => {
     setError(null);
 
     try {
-      const result = await createCategoryApi(categoryData, token);
-      setData(result);
+      const newCategory = await createCategoryApi(categoryData, token);
+      setCategories([...categories, newCategory]);
     } catch (err: any) {
       setError(err.message || "Failed to create category!");
     } finally {
@@ -23,7 +24,7 @@ const useCreateCategory = () => {
     }
   };
 
-  return { createCategory, data, loading, error };
+  return { createCategory, loading, error };
 };
 
 export default useCreateCategory;

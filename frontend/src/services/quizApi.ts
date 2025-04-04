@@ -1,11 +1,19 @@
+import { Quiz } from "../types/QuizType";
 import { handleRequest } from "./api";
 
 export const fetchQuizzes = async () => {
   return await handleRequest("quiz", "GET", {});
 };
 
-export const fetchQuizzesByCategory = async (categoryId: string) => {
-  return await handleRequest(`quiz/category/${categoryId}`, "GET", {});
+export const fetchQuizzesByCategory = async (
+  categoryId: string
+): Promise<Quiz[]> => {
+  const endpoint =
+    !categoryId || categoryId === "all"
+      ? "quiz"
+      : `quiz/category/${categoryId}`;
+
+  return await handleRequest(endpoint, "GET", {});
 };
 
 export const fetchQuizzesByName = async (name: string) => {
