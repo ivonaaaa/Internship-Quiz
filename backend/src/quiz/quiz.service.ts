@@ -93,7 +93,7 @@ export class QuizService {
   }
 
   async createQuiz(userRole: string, createQuizDto: CreateQuizDto) {
-    if (userRole !== 'admin')
+    if (userRole !== 'ADMIN')
       throw new ForbiddenException('Only admins can create quizzes!');
 
     return this.prisma.quiz.create({
