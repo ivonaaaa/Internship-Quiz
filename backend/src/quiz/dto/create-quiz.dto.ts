@@ -7,8 +7,8 @@ import {
   IsBoolean,
 } from '@nestjs/class-validator';
 import { Type } from '@nestjs/class-transformer';
-import { QuizType } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import { QuestionType } from '@prisma/client';
 
 class CreateAnswerDto {
   @ApiProperty({ description: 'Answer text' })
@@ -24,6 +24,10 @@ class CreateQuestionDto {
   @ApiProperty({ description: 'Question text' })
   @IsString()
   text: string;
+
+  @ApiProperty({ enum: QuestionType, description: 'Type of the question' })
+  @IsEnum(QuestionType)
+  type: QuestionType;
 
   @ApiProperty({
     type: [CreateAnswerDto],
@@ -43,10 +47,6 @@ export class CreateQuizDto {
   @ApiProperty({ description: 'Category ID for the quiz' })
   @IsUUID()
   categoryId: string;
-
-  @ApiProperty({ enum: QuizType, description: 'Type of the quiz' })
-  @IsEnum(QuizType)
-  type: QuizType;
 
   @ApiProperty({
     type: [CreateQuestionDto],

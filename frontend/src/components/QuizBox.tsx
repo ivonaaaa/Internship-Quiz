@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import { Quiz } from "../types/QuizType";
 import { Category } from "../types/CategoryType";
+import { useNavigate } from "react-router-dom";
 
 interface QuizBoxProps {
   quiz: Quiz;
@@ -9,6 +10,11 @@ interface QuizBoxProps {
 
 const QuizBox: React.FC<QuizBoxProps> = ({ quiz, category }) => {
   const imagePath = `../assets/images/${category.image}`;
+  const navigate = useNavigate();
+
+  const handlePlayClick = () => {
+    navigate(`/quiz/${quiz.id}`);
+  };
 
   return (
     <Box
@@ -21,7 +27,7 @@ const QuizBox: React.FC<QuizBoxProps> = ({ quiz, category }) => {
     >
       <img src={imagePath} alt={quiz.title} width="100%" height="150px" />
       <Typography variant="h6">{quiz.title}</Typography>
-      <Button variant="contained" color="primary">
+      <Button variant="contained" color="primary" onClick={handlePlayClick}>
         Play
       </Button>
     </Box>

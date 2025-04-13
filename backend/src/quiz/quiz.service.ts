@@ -53,7 +53,11 @@ export class QuizService {
     });
   }
 
-  async submitQuiz(userId: string, quizId: string, answers: any) {
+  async submitQuiz(
+    userId: string,
+    quizId: string,
+    answers: Record<string, string>,
+  ) {
     const quiz = await this.prisma.quiz.findUnique({
       where: { id: quizId },
       include: { questions: { include: { answers: true } } },
@@ -62,9 +66,9 @@ export class QuizService {
     if (!quiz) throw new NotFoundException('Quiz not found!');
 
     let score = 0;
-    quiz.questions.forEach((question, index) => {
+    quiz.questions.forEach((question) => {
       const correctAnswer = question.answers.find((answer) => answer.isCorrect);
-      if (answers[index] === correctAnswer?.id) {
+      if (answers[question.id] === correctAnswer?.id) {
         score += 1;
       }
     });
@@ -100,7 +104,6 @@ export class QuizService {
       data: {
         title: createQuizDto.title,
         categoryId: createQuizDto.categoryId,
-        type: createQuizDto.type,
         questions: {
           create: createQuizDto.questions.map((question) => ({
             text: question.text,
@@ -110,6 +113,7 @@ export class QuizService {
                 isCorrect: answer.isCorrect,
               })),
             },
+            type: question.type,
           })),
         },
       },

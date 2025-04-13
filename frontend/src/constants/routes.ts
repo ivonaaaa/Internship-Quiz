@@ -6,6 +6,6 @@ export const routes: Routes = {
   LOGIN: "/login",
   REGISTER: "/register",
   QUIZZES: "/",
-  QUIZ: "/quiz-page",
+  QUIZ: "/quiz/:quizId",
   NOT_FOUND: "*",
 };

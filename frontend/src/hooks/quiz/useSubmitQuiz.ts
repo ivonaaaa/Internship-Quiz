@@ -6,14 +6,23 @@ export const useSubmitQuiz = () => {
   const [error, setError] = useState<string | null>(null);
   const [score, setScore] = useState<number | null>(null);
 
-  const submit = async (quizId: string, answers: any, token: string) => {
+  const submit = async (
+    quizId: string,
+    submitData: { userId: string; answers: Record<string, any> },
+    token: string
+  ) => {
     setLoading(true);
     setError(null);
+
     try {
-      const result = await submitQuiz(quizId, answers, token);
-      setScore(result.score);
+      const result = await submitQuiz(quizId, submitData, token);
+      setScore(result.score || 0);
+      return result;
     } catch (err) {
-      setError("Failed to submit quiz!");
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to submit quiz";
+      setError(errorMessage);
+      throw err;
     } finally {
       setLoading(false);
     }

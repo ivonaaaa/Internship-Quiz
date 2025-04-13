@@ -1,5 +1,5 @@
-//! before seeding add this line in package.json:
-//! "type": "module",
+//! before seeding add this line in package.json: "type": "module",
+//! and then run in backend terminal: "yarn tsx prisma/seed"
 
 import { PrismaClient } from '@prisma/client';
 
@@ -8,265 +8,265 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding database...');
 
-  const user1 = await prisma.user.create({
-    data: {
-      email: 'jure@gmail.com',
-      password: 'jure123',
-      username: 'jure',
-      role: 'USER',
-    },
-  });
+  const [user1, user2, admin] = await Promise.all([
+    prisma.user.create({
+      data: {
+        email: 'jure@gmail.com',
+        password: 'jure123',
+        username: 'jure',
+        role: 'USER',
+      },
+    }),
+    prisma.user.create({
+      data: {
+        email: 'duje@gmail.com',
+        password: 'duje123',
+        username: 'duje',
+        role: 'USER',
+      },
+    }),
+    prisma.user.create({
+      data: {
+        email: 'ivona@gmail.com',
+        password: 'ivona123',
+        username: 'ivona',
+        role: 'ADMIN',
+      },
+    }),
+  ]);
 
-  const user2 = await prisma.user.create({
-    data: {
-      email: 'duje@gmail.com',
-      password: 'duje123',
-      username: 'duje',
-      role: 'USER',
-    },
-  });
+  const [scienceCategory, animalsCategory, foodCategory] = await Promise.all([
+    prisma.category.create({ data: { name: 'Science', image: 'science.jpg' } }),
+    prisma.category.create({ data: { name: 'Animals', image: 'animals.jpg' } }),
+    prisma.category.create({ data: { name: 'Food', image: 'food.jpg' } }),
+  ]);
 
-  const admin = await prisma.user.create({
-    data: {
-      email: 'ivona@gmail.com',
-      password: 'ivona123',
-      username: 'ivona',
-      role: 'ADMIN',
-    },
-  });
+  const [scienceQuiz, animalsQuiz1, animalsQuiz2, foodQuiz] = await Promise.all(
+    [
+      prisma.quiz.create({
+        data: { title: 'Discover science', categoryId: scienceCategory.id },
+      }),
+      prisma.quiz.create({
+        data: { title: 'Animal quiz of truth', categoryId: animalsCategory.id },
+      }),
+      prisma.quiz.create({
+        data: { title: 'Animal trivia', categoryId: animalsCategory.id },
+      }),
+      prisma.quiz.create({
+        data: { title: 'Are you wasting food?', categoryId: foodCategory.id },
+      }),
+    ],
+  );
 
-  const scienceCategory = await prisma.category.create({
-    data: {
-      name: 'Science',
-      image: 'science.jpg',
-    },
-  });
-
-  const animalsCategory = await prisma.category.create({
-    data: {
-      name: 'Animals',
-      image: 'animals.jpg',
-    },
-  });
-
-  const foodCategory = await prisma.category.create({
-    data: {
-      name: 'Food',
-      image: 'food.jpg',
-    },
-  });
-
-  const scienceQuiz1 = await prisma.quiz.create({
-    data: {
-      title: 'Discover science',
-      categoryId: scienceCategory.id,
-      type: 'FILL_IN_THE_BLANKS',
-    },
-  });
-
-  const animalsQuiz1 = await prisma.quiz.create({
-    data: {
-      title: 'Animal quiz of truth',
-      categoryId: animalsCategory.id,
-      type: 'TRUE_FALSE',
-    },
-  });
-
-  const animalsQuiz2 = await prisma.quiz.create({
-    data: {
-      title: 'Animal trivia',
-      categoryId: animalsCategory.id,
-      type: 'MULTIPLE_CHOICE',
-    },
-  });
-
-  const foodQuiz1 = await prisma.quiz.create({
-    data: {
-      title: 'Are you waisting food?',
-      categoryId: foodCategory.id,
-      type: 'MULTIPLE_CHOICE',
-    },
-  });
-
-  //! science quiz 1
-  const question1 = await prisma.question.create({
-    data: {
-      text: '___ is the chemical symbol for water.',
-      quizId: scienceQuiz1.id,
-    },
-  });
-  const question2 = await prisma.question.create({
-    data: {
-      text: 'The process called ___ is how plants make their own food.',
-      quizId: scienceQuiz1.id,
-    },
-  });
-  const question3 = await prisma.question.create({
-    data: {
-      text: 'The Earth revolves around the ___.',
-      quizId: scienceQuiz1.id,
-    },
-  });
-  const question4 = await prisma.question.create({
-    data: {
-      text: 'Albert Einstein developed the theory of ___.',
-      quizId: scienceQuiz1.id,
-    },
-  });
-  const question5 = await prisma.question.create({
-    data: {
-      text: 'The nearest star to Earth is ___, apart from the Sun.',
-      quizId: scienceQuiz1.id,
-    },
-  });
+  const [q1, q2, q3, q4, q5] = await Promise.all([
+    prisma.question.create({
+      data: {
+        text: 'What is the chemical symbol for water?',
+        quizId: scienceQuiz.id,
+        type: 'MULTIPLE_CHOICE',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'Photosynthesis is the process by which plants make food.',
+        quizId: scienceQuiz.id,
+        type: 'TRUE_FALSE',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'The Earth revolves around the ___.',
+        quizId: scienceQuiz.id,
+        type: 'FILL_IN_THE_BLANKS',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'Albert Einstein developed the theory of relativity.',
+        quizId: scienceQuiz.id,
+        type: 'TRUE_FALSE',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'The nearest star to Earth (after the Sun) is ___.',
+        quizId: scienceQuiz.id,
+        type: 'FILL_IN_THE_BLANKS',
+      },
+    }),
+  ]);
 
   await prisma.answer.createMany({
     data: [
-      { text: 'h20', isCorrect: true, questionId: question1.id },
-      { text: 'photosynthesis', isCorrect: true, questionId: question2.id },
-      { text: 'sun', isCorrect: true, questionId: question3.id },
-      { text: 'relativity', isCorrect: true, questionId: question4.id },
-      { text: 'proxima centauri', isCorrect: true, questionId: question5.id },
+      { text: 'H2O', isCorrect: true, questionId: q1.id },
+      { text: 'CO2', isCorrect: false, questionId: q1.id },
+      { text: 'O2', isCorrect: false, questionId: q1.id },
+
+      { text: 'true', isCorrect: true, questionId: q2.id },
+      { text: 'sun', isCorrect: true, questionId: q3.id },
+      { text: 'true', isCorrect: true, questionId: q4.id },
+      { text: 'proxima centauri', isCorrect: true, questionId: q5.id },
     ],
   });
 
-  //! animals quiz 1
-  const question6 = await prisma.question.create({
-    data: { text: 'Dolphins are mammals.', quizId: animalsQuiz1.id },
-  });
-  const question7 = await prisma.question.create({
-    data: { text: 'Bats are blind.', quizId: animalsQuiz1.id },
-  });
-  const question8 = await prisma.question.create({
-    data: { text: 'An octopus has three hearts.', quizId: animalsQuiz1.id },
-  });
-  const question9 = await prisma.question.create({
-    data: {
-      text: 'Cows can walk downstairs but not upstairs.',
-      quizId: animalsQuiz1.id,
-    },
-  });
-  const question10 = await prisma.question.create({
-    data: {
-      text: "A group of crows is called a 'murder'.",
-      quizId: animalsQuiz1.id,
-    },
-  });
+  const [q6, q7, q8, q9, q10] = await Promise.all([
+    prisma.question.create({
+      data: {
+        text: 'Dolphins are mammals.',
+        quizId: animalsQuiz1.id,
+        type: 'TRUE_FALSE',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'Bats are blind.',
+        quizId: animalsQuiz1.id,
+        type: 'TRUE_FALSE',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'An octopus has ___ hearts.',
+        quizId: animalsQuiz1.id,
+        type: 'FILL_IN_THE_BLANKS',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'Which of these animals can climb trees?',
+        quizId: animalsQuiz1.id,
+        type: 'MULTIPLE_CHOICE',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: "A group of crows is called a 'murder'.",
+        quizId: animalsQuiz1.id,
+        type: 'TRUE_FALSE',
+      },
+    }),
+  ]);
 
   await prisma.answer.createMany({
     data: [
-      { text: 'true', isCorrect: true, questionId: question6.id },
-      { text: 'false', isCorrect: true, questionId: question7.id },
-      { text: 'true', isCorrect: true, questionId: question8.id },
-      { text: 'false', isCorrect: true, questionId: question9.id },
-      { text: 'true', isCorrect: true, questionId: question10.id },
+      { text: 'true', isCorrect: true, questionId: q6.id },
+      { text: 'false', isCorrect: true, questionId: q7.id },
+      { text: '3', isCorrect: true, questionId: q8.id },
+
+      { text: 'sloth', isCorrect: true, questionId: q9.id },
+      { text: 'penguin', isCorrect: false, questionId: q9.id },
+      { text: 'whale', isCorrect: false, questionId: q9.id },
+
+      { text: 'true', isCorrect: true, questionId: q10.id },
     ],
   });
 
-  //! animals quiz 2
-  const question11 = await prisma.question.create({
-    data: {
-      text: 'Which of these animals is the fastest?',
-      quizId: animalsQuiz2.id,
-    },
-  });
-  const question12 = await prisma.question.create({
-    data: { text: 'Which mammal lays eggs?', quizId: animalsQuiz2.id },
-  });
-  const question13 = await prisma.question.create({
-    data: { text: 'What is a baby rabbit called?', quizId: animalsQuiz2.id },
-  });
-  const question14 = await prisma.question.create({
-    data: {
-      text: "Which animal is known as the 'king of the jungle'?",
-      quizId: animalsQuiz2.id,
-    },
-  });
-  const question15 = await prisma.question.create({
-    data: { text: 'What do pandas mainly eat?', quizId: animalsQuiz2.id },
-  });
+  const [q11, q12, q13, q14, q15] = await Promise.all([
+    prisma.question.create({
+      data: {
+        text: 'Which of these animals is the fastest?',
+        quizId: animalsQuiz2.id,
+        type: 'MULTIPLE_CHOICE',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'The platypus lays eggs.',
+        quizId: animalsQuiz2.id,
+        type: 'TRUE_FALSE',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'A baby rabbit is called a ___.',
+        quizId: animalsQuiz2.id,
+        type: 'FILL_IN_THE_BLANKS',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'Which animal is known as the king of the jungle?',
+        quizId: animalsQuiz2.id,
+        type: 'MULTIPLE_CHOICE',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'Pandas mainly eat bamboo.',
+        quizId: animalsQuiz2.id,
+        type: 'TRUE_FALSE',
+      },
+    }),
+  ]);
 
   await prisma.answer.createMany({
     data: [
-      { text: 'cheetah', isCorrect: true, questionId: question11.id },
-      { text: 'peregrine falcon', isCorrect: false, questionId: question11.id },
-      { text: 'greyhound', isCorrect: false, questionId: question11.id },
+      { text: 'cheetah', isCorrect: true, questionId: q11.id },
+      { text: 'greyhound', isCorrect: false, questionId: q11.id },
+      { text: 'peregrine falcon', isCorrect: false, questionId: q11.id },
 
-      { text: 'platypus', isCorrect: true, questionId: question12.id },
-      { text: 'echidna', isCorrect: false, questionId: question12.id },
-      { text: 'armadillo', isCorrect: false, questionId: question12.id },
+      { text: 'true', isCorrect: true, questionId: q12.id },
+      { text: 'kit', isCorrect: true, questionId: q13.id },
 
-      { text: 'kit', isCorrect: true, questionId: question13.id },
-      { text: 'cub', isCorrect: false, questionId: question13.id },
-      { text: 'pup', isCorrect: false, questionId: question13.id },
+      { text: 'lion', isCorrect: true, questionId: q14.id },
+      { text: 'tiger', isCorrect: false, questionId: q14.id },
+      { text: 'leopard', isCorrect: false, questionId: q14.id },
 
-      { text: 'lion', isCorrect: true, questionId: question14.id },
-      { text: 'tiger', isCorrect: false, questionId: question14.id },
-      { text: 'leopard', isCorrect: false, questionId: question14.id },
-
-      { text: 'bamboo', isCorrect: true, questionId: question15.id },
-      { text: 'fruits', isCorrect: false, questionId: question15.id },
-      { text: 'fish', isCorrect: false, questionId: question15.id },
+      { text: 'true', isCorrect: true, questionId: q15.id },
     ],
   });
 
-  //! food quiz 1
-  const question16 = await prisma.question.create({
-    data: {
-      text: 'Which fruit has seeds on the outside instead of inside?',
-      quizId: foodQuiz1.id,
-    },
-  });
-
-  const question17 = await prisma.question.create({
-    data: {
-      text: 'Which type of pasta is shaped like little rice grains?',
-      quizId: foodQuiz1.id,
-    },
-  });
-
-  const question18 = await prisma.question.create({
-    data: {
-      text: 'What gives carrots their orange color?',
-      quizId: foodQuiz1.id,
-    },
-  });
-
-  const question19 = await prisma.question.create({
-    data: {
-      text: 'Which dairy product is made by churning cream?',
-      quizId: foodQuiz1.id,
-    },
-  });
-
-  const question20 = await prisma.question.create({
-    data: {
-      text: 'What ingredient makes bread dough rise?',
-      quizId: foodQuiz1.id,
-    },
-  });
+  const [q16, q17, q18, q19, q20] = await Promise.all([
+    prisma.question.create({
+      data: {
+        text: 'Which fruit has seeds on the outside?',
+        quizId: foodQuiz.id,
+        type: 'MULTIPLE_CHOICE',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'Bread dough rises due to ___.',
+        quizId: foodQuiz.id,
+        type: 'FILL_IN_THE_BLANKS',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'Orzo is shaped like rice grains.',
+        quizId: foodQuiz.id,
+        type: 'TRUE_FALSE',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'Carrots get their color from beta-carotene.',
+        quizId: foodQuiz.id,
+        type: 'TRUE_FALSE',
+      },
+    }),
+    prisma.question.create({
+      data: {
+        text: 'What ingredient is made by churning cream?',
+        quizId: foodQuiz.id,
+        type: 'MULTIPLE_CHOICE',
+      },
+    }),
+  ]);
 
   await prisma.answer.createMany({
     data: [
-      { text: 'strawberry', isCorrect: true, questionId: question16.id },
-      { text: 'blueberry', isCorrect: false, questionId: question16.id },
-      { text: 'cherry', isCorrect: false, questionId: question16.id },
+      { text: 'strawberry', isCorrect: true, questionId: q16.id },
+      { text: 'blueberry', isCorrect: false, questionId: q16.id },
+      { text: 'cherry', isCorrect: false, questionId: q16.id },
 
-      { text: 'orzo', isCorrect: true, questionId: question17.id },
-      { text: 'penne', isCorrect: false, questionId: question17.id },
-      { text: 'fusilli', isCorrect: false, questionId: question17.id },
+      { text: 'yeast', isCorrect: true, questionId: q17.id },
+      { text: 'true', isCorrect: true, questionId: q18.id },
+      { text: 'true', isCorrect: true, questionId: q19.id },
 
-      { text: 'beta-carotene', isCorrect: true, questionId: question18.id },
-      { text: 'chlorophyll', isCorrect: false, questionId: question18.id },
-      { text: 'anthocyanin', isCorrect: false, questionId: question18.id },
-
-      { text: 'butter', isCorrect: true, questionId: question19.id },
-      { text: 'yogurt', isCorrect: false, questionId: question19.id },
-      { text: 'cheese', isCorrect: false, questionId: question19.id },
-
-      { text: 'yeast', isCorrect: true, questionId: question20.id },
-      { text: 'baking soda', isCorrect: false, questionId: question20.id },
-      { text: 'salt', isCorrect: false, questionId: question20.id },
+      { text: 'butter', isCorrect: true, questionId: q20.id },
+      { text: 'yogurt', isCorrect: false, questionId: q20.id },
+      { text: 'cheese', isCorrect: false, questionId: q20.id },
     ],
   });
 
