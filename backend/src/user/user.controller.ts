@@ -11,6 +11,11 @@ export class UserController {
     return this.userService.getAllUsers();
   }
 
+  @Get('results')
+  async getAllResults() {
+    return this.userService.getAllQuizResults();
+  }
+
   @Post('register')
   register(@Body() { email, password }: RegisterDto) {
     return this.userService.register(email, password);

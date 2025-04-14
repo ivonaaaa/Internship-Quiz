@@ -19,6 +19,26 @@ export class UserService {
     return this.prisma.user.findMany();
   }
 
+  async getAllQuizResults() {
+    return this.prisma.quizResult.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
+        quiz: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
+    });
+  }
+
   async register(email: string, password: string) {
     const existingUser = await this.prisma.user.findUnique({
       where: {

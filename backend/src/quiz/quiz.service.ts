@@ -138,13 +138,6 @@ export class QuizService {
     }
   }
 
-  async getUserQuizAttempts(userId: string) {
-    return this.prisma.quizResult.findMany({
-      where: { userId },
-      include: { user: true, quiz: true },
-    });
-  }
-
   async createQuiz(userRole: string, createQuizDto: CreateQuizDto) {
     if (userRole !== 'ADMIN')
       throw new ForbiddenException('Only admins can create quizzes!');

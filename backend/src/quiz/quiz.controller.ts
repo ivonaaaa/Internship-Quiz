@@ -49,16 +49,6 @@ export class QuizController {
     return this.quizService.submitQuiz(body.userId, quizId, body.answers);
   }
 
-  @Get(':quizId/results')
-  async getQuizResults(@Param('quizId') quizId: string) {
-    return this.quizService.getUserQuizAttempts(quizId);
-  }
-
-  @Get('user/:userId/attempts')
-  async getUserQuizAttempts(@Param('userId') userId: string) {
-    return this.quizService.getUserQuizAttempts(userId);
-  }
-
   @Post()
   @UseGuards(AdminAuthGuard)
   async createQuiz(@Request() req, @Body() createQuizDto: CreateQuizDto) {

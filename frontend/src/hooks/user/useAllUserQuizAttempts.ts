@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { fetchUserQuizAttempts } from "../../services/userApi";
+import { fetchAllUserQuizAttempts } from "../../services/userApi";
+import { UserQuizAttempt } from "../../types/UserQuizAttempt";
 
-export const useUserQuizAttempts = (userId: string) => {
-  const [attempts, setAttempts] = useState([]);
+export const useAllUserQuizAttempts = () => {
+  const [attempts, setAttempts] = useState<UserQuizAttempt[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -10,7 +11,7 @@ export const useUserQuizAttempts = (userId: string) => {
     const fetchAttempts = async () => {
       try {
         setLoading(true);
-        const data = await fetchUserQuizAttempts(userId);
+        const data = await fetchAllUserQuizAttempts();
         setAttempts(data);
       } catch (err) {
         setError(err as Error);
@@ -19,8 +20,8 @@ export const useUserQuizAttempts = (userId: string) => {
       }
     };
 
-    if (userId) fetchAttempts();
-  }, [userId]);
+    fetchAttempts();
+  }, []);
 
   return { attempts, loading, error };
 };

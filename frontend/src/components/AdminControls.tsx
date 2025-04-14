@@ -14,6 +14,7 @@ import {
 import useCreateCategory from "../hooks/category/useCreateCategory";
 import useCreateQuiz from "../hooks/quiz/useCreateQuiz";
 import { useCategories } from "../hooks/category/useCategories";
+import { ScoresPanel } from "./ScoresPanel";
 
 interface QuestionInput {
   question: string;
@@ -44,8 +45,8 @@ const AdminControls = () => {
     error: quizError,
   } = useCreateQuiz();
   const { categories } = useCategories();
+  const [openResults, setOpenResults] = useState(false);
 
-  const handleOpenCategory = () => setOpenCategory(true);
   const handleCloseCategory = () => setOpenCategory(false);
   const handleSubmitCategory = async () => {
     if (!categoryName.trim() || !image.trim()) return;
@@ -57,7 +58,6 @@ const AdminControls = () => {
     handleCloseCategory();
   };
 
-  const handleOpenQuiz = () => setOpenQuiz(true);
   const handleCloseQuiz = () => setOpenQuiz(false);
   const handleAddQuestion = () => {
     setQuestions([
@@ -112,6 +112,7 @@ const AdminControls = () => {
     }
     setQuestions(updated);
   };
+
   const handleSubmitQuiz = async () => {
     const validQuestions = questions.filter((q) => q.question.trim());
     if (validQuestions.length < 5) {
@@ -229,6 +230,10 @@ const AdminControls = () => {
     handleCloseQuiz();
   };
 
+  const handleSeeResults = () => {
+    setOpenResults(true);
+  };
+
   return (
     <>
       <Box
@@ -242,18 +247,26 @@ const AdminControls = () => {
         <Button
           variant="contained"
           color="secondary"
-          onClick={handleOpenCategory}
+          onClick={() => setOpenCategory(true)}
         >
           Add Category
         </Button>
-        <Button variant="contained" color="secondary" onClick={handleOpenQuiz}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => setOpenQuiz(true)}
+        >
           Add Quiz
         </Button>
-        <Button variant="contained" color="secondary">
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleSeeResults}
+        >
           See Results
         </Button>
       </Box>
-      <Modal open={openCategory} onClose={handleCloseCategory}>
+      <Modal open={openCategory} onClose={() => setOpenCategory(false)}>
         <Box
           sx={{
             position: "absolute",
@@ -288,7 +301,7 @@ const AdminControls = () => {
           <Box
             sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 2 }}
           >
-            <Button onClick={handleCloseCategory} color="error">
+            <Button onClick={() => setOpenCategory(false)} color="error">
               Cancel
             </Button>
             <Button
@@ -301,7 +314,7 @@ const AdminControls = () => {
           </Box>
         </Box>
       </Modal>
-      <Modal open={openQuiz} onClose={handleCloseQuiz}>
+      <Modal open={openQuiz} onClose={() => setOpenQuiz(false)}>
         <Box
           sx={{
             position: "absolute",
@@ -472,6 +485,9 @@ const AdminControls = () => {
             </Button>
           </Box>
         </Box>
+      </Modal>
+      <Modal open={openResults} onClose={() => setOpenResults(false)}>
+        <ScoresPanel open={openResults} onClose={() => setOpenResults(false)} />
       </Modal>
     </>
   );
