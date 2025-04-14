@@ -1,5 +1,7 @@
 //! before seeding add this line in package.json: "type": "module",
 //! and then run in backend terminal: "yarn tsx prisma/seed"
+//! you will also need to manually hash the passwords in the database for the existing users
+//! or simply register a new user for whom this is done automatically
 
 import { PrismaClient } from '@prisma/client';
 

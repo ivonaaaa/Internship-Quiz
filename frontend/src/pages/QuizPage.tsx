@@ -4,6 +4,7 @@ import { useQuizQuestions } from "../hooks/quiz/useQuestions";
 import { useSubmitQuiz } from "../hooks/quiz/useSubmitQuiz";
 import Navigation from "../components/Navigation";
 import QuestionCard from "../components/QuestionCard";
+import { jwtDecode } from "jwt-decode";
 
 const QuizPage: React.FC = () => {
   const { quizId } = useParams<{ quizId: string }>();
@@ -22,7 +23,6 @@ const QuizPage: React.FC = () => {
   } = useSubmitQuiz();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
@@ -30,6 +30,7 @@ const QuizPage: React.FC = () => {
   const [userAnswers, setUserAnswers] = useState<Record<string, any>>({});
   const currentQuestion = questions[currentQuestionIndex];
 
+  // Timer logic
   useEffect(() => {
     if (!quizStarted || quizCompleted || questionsLoading) return;
 
@@ -57,18 +58,22 @@ const QuizPage: React.FC = () => {
 
   const handleAnswerChange = (questionId: string, answer: any) => {
     setUserAnswers((prev) => ({ ...prev, [questionId]: answer }));
+    setSelectedAnswer(answer);
   };
 
   const handleNextQuestion = () => {
-    if (currentQuestion) {
+    if (currentQuestion && selectedAnswer !== null) {
       setUserAnswers((prev) => ({
         ...prev,
         [currentQuestion.id]: selectedAnswer,
       }));
     }
-    if (currentQuestionIndex < questions.length - 1)
+
+    if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
-    else handleQuizSubmit();
+    } else {
+      handleQuizSubmit();
+    }
   };
 
   const handleQuizSubmit = async () => {
@@ -76,14 +81,15 @@ const QuizPage: React.FC = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("userId");
+      if (!token) throw new Error("No authentication token found!");
 
-      if (!token) throw new Error("No authentication token found");
-      if (!userId) throw new Error("No user ID found in localStorage");
+      const decodedToken: { id: string } = jwtDecode(token);
+      const userId = decodedToken.id;
+      if (!userId) throw new Error("User ID not found in token!");
 
       const submitData = {
         userId,
-        answers,
+        answers: userAnswers,
       };
 
       await submit(quizId || "", submitData, token);
@@ -94,10 +100,11 @@ const QuizPage: React.FC = () => {
 
   const handleRestartQuiz = () => {
     setCurrentQuestionIndex(0);
-    setAnswers({});
     setSelectedAnswer(null);
+    setUserAnswers({});
     setQuizCompleted(false);
     setTimeLeft(30);
+    setQuizStarted(false);
   };
 
   const handleExitQuiz = () => {
@@ -117,7 +124,6 @@ const QuizPage: React.FC = () => {
     return (
       <div>
         <Navigation />
-
         <h1>Welcome to the Quiz!</h1>
         <div>
           <p>This quiz contains {questions.length} questions.</p>
@@ -146,7 +152,7 @@ const QuizPage: React.FC = () => {
               <div>
                 <div>{score}%</div>
                 <p>
-                  You answered {Math.round((score / 100) * questions.length)}
+                  You answered {Math.round((score / 100) * questions.length)}{" "}
                   out of {questions.length} questions correctly!
                 </p>
               </div>

@@ -66,12 +66,57 @@ export class QuizService {
     if (!quiz) throw new NotFoundException('Quiz not found!');
 
     let score = 0;
+    let totalQuestions = quiz.questions.length;
+
     quiz.questions.forEach((question) => {
-      const correctAnswer = question.answers.find((answer) => answer.isCorrect);
-      if (answers[question.id] === correctAnswer?.id) {
-        score += 1;
+      const userAnswer = answers[question.id];
+      if (!userAnswer) return;
+
+      switch (question.type) {
+        case 'MULTIPLE_CHOICE':
+          const correctMCAnswer = question.answers.find(
+            (answer) => answer.isCorrect,
+          );
+          const isCorrectMC = userAnswer === correctMCAnswer?.id;
+
+          if (isCorrectMC) score += 1;
+          break;
+
+        case 'TRUE_FALSE':
+          const correctTFAnswer = question.answers.find(
+            (answer) => answer.isCorrect,
+          );
+          const isCorrectTF =
+            userAnswer.toLowerCase() === correctTFAnswer?.text.toLowerCase();
+
+          if (isCorrectTF) score += 1;
+          break;
+
+        case 'FILL_IN_THE_BLANKS':
+          const correctTextAnswer = question.answers.find(
+            (answer) => answer.isCorrect,
+          );
+          const isCorrectText =
+            userAnswer.toLowerCase().trim() ===
+            correctTextAnswer?.text.toLowerCase().trim();
+
+          if (isCorrectText) score += 1;
+          break;
+
+        default:
+          const correctAnswer = question.answers.find(
+            (answer) => answer.isCorrect,
+          );
+          const isCorrectById = userAnswer === correctAnswer?.id;
+          const isCorrectByText =
+            userAnswer.toLowerCase() === correctAnswer?.text.toLowerCase();
+
+          if (isCorrectById || isCorrectByText) score += 1;
+          break;
       }
     });
+
+    const percentageScore = Math.round((score / totalQuestions) * 100);
 
     const existingResult = await this.prisma.quizResult.findFirst({
       where: { userId, quizId },
@@ -80,11 +125,15 @@ export class QuizService {
     if (existingResult) {
       return this.prisma.quizResult.update({
         where: { id: existingResult.id },
-        data: { score },
+        data: { score: percentageScore },
       });
     } else {
       return this.prisma.quizResult.create({
-        data: { userId, quizId, score },
+        data: {
+          userId,
+          quizId,
+          score: percentageScore,
+        },
       });
     }
   }

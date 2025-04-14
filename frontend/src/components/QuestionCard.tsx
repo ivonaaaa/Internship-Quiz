@@ -22,6 +22,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   );
 
   useEffect(() => {
+    setSelectedAnswer(initialAnswer || null);
+  }, [question.id]);
+
+  useEffect(() => {
     if (selectedAnswer !== null) {
       onAnswerChange(question.id, selectedAnswer);
     }
@@ -38,8 +42,21 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   const renderOptions = () => {
     if (question.type === "TRUE_FALSE") {
       return ["true", "false"].map((option, index) => (
-        <button key={index} onClick={() => handleAnswerChange(option)}>
-          {option}
+        <button
+          key={index}
+          onClick={() => handleAnswerChange(option)}
+          style={{
+            margin: "0.5rem",
+            padding: "0.5rem 1rem",
+            backgroundColor: selectedAnswer === option ? "#add8e6" : "#f0f0f0",
+            color: selectedAnswer === option ? "#000" : "#333",
+            fontWeight: selectedAnswer === option ? "bold" : "normal",
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          {option.toUpperCase()}
         </button>
       ));
     }
@@ -50,7 +67,21 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       );
 
       return questionAnswers.map((option: any) => (
-        <button key={option.id} onClick={() => handleAnswerChange(option.id)}>
+        <button
+          key={option.id}
+          onClick={() => handleAnswerChange(option.id)}
+          style={{
+            margin: "0.5rem",
+            padding: "0.5rem 1rem",
+            backgroundColor:
+              selectedAnswer === option.id ? "#add8e6" : "#f0f0f0",
+            color: selectedAnswer === option.id ? "#000" : "#333",
+            fontWeight: selectedAnswer === option.id ? "bold" : "normal",
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
           <div>{option.text}</div>
         </button>
       ));
