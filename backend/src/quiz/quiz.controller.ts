@@ -11,6 +11,7 @@ import {
 import { QuizService } from './quiz.service';
 import { AdminAuthGuard } from 'src/user/admin-auth.guard';
 import { CreateQuizDto } from './dto/create-quiz.dto';
+import { UserAuthGuard } from 'src/user/user-auth.guard';
 
 @Controller('quiz')
 export class QuizController {
@@ -42,6 +43,7 @@ export class QuizController {
   }
 
   @Post(':id/submit')
+  @UseGuards(UserAuthGuard)
   async submitQuiz(
     @Param('id') quizId: string,
     @Body() body: { userId: string; answers: any },

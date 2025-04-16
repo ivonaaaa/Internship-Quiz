@@ -55,6 +55,7 @@ const AdminControls = () => {
     await createCategory({ name: categoryName, image }, token);
     setCategoryName("");
     setImage("");
+    window.location.reload();
     handleCloseCategory();
   };
 
@@ -228,6 +229,7 @@ const AdminControls = () => {
       { question: "", type: "FILL_IN_THE_BLANKS", correctAnswer: "" },
     ]);
     handleCloseQuiz();
+    window.location.reload();
   };
 
   const handleSeeResults = () => {

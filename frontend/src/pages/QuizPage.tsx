@@ -28,9 +28,9 @@ const QuizPage: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(30);
   const [quizStarted, setQuizStarted] = useState(false);
   const [userAnswers, setUserAnswers] = useState<Record<string, any>>({});
+  const [adminAttemptedSubmit, setAdminAttemptedSubmit] = useState(false);
   const currentQuestion = questions[currentQuestionIndex];
 
-  // Timer logic
   useEffect(() => {
     if (!quizStarted || quizCompleted || questionsLoading) return;
 
@@ -69,11 +69,9 @@ const QuizPage: React.FC = () => {
       }));
     }
 
-    if (currentQuestionIndex < questions.length - 1) {
+    if (currentQuestionIndex < questions.length - 1)
       setCurrentQuestionIndex((prev) => prev + 1);
-    } else {
-      handleQuizSubmit();
-    }
+    else handleQuizSubmit();
   };
 
   const handleQuizSubmit = async () => {
@@ -83,9 +81,12 @@ const QuizPage: React.FC = () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No authentication token found!");
 
-      const decodedToken: { id: string } = jwtDecode(token);
+      const decodedToken: { id: string; role: string } = jwtDecode(token);
       const userId = decodedToken.id;
       if (!userId) throw new Error("User ID not found in token!");
+
+      const userRole = decodedToken.role;
+      if (userRole === "ADMIN") setAdminAttemptedSubmit(true);
 
       const submitData = {
         userId,
@@ -142,22 +143,29 @@ const QuizPage: React.FC = () => {
       <div>
         <h1>Quiz Completed!</h1>
 
+        {adminAttemptedSubmit && (
+          <div>
+            <p>
+              As an admin, your quiz wasn't submitted. You can test the quizzes
+              and see your scores, but submissions are reserved for users.
+            </p>
+          </div>
+        )}
+
         {submitError ? (
           <div>Error submitting quiz: {submitError}</div>
         ) : submitting ? (
           <p>Submitting your answers...</p>
         ) : (
           <div>
-            {score !== null ? (
+            {score !== null && (
               <div>
-                <div>{score}%</div>
+                <div>Your score: {score}%</div>
                 <p>
                   You answered {Math.round((score / 100) * questions.length)}{" "}
                   out of {questions.length} questions correctly!
                 </p>
               </div>
-            ) : (
-              <p>Your answers have been submitted!</p>
             )}
           </div>
         )}
@@ -177,6 +185,7 @@ const QuizPage: React.FC = () => {
         <span>
           Question {currentQuestionIndex + 1} of {questions.length}
         </span>
+        <br />
         <span>Time left: {timeLeft}s</span>
       </div>
 
