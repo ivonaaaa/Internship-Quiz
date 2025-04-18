@@ -1,7 +1,8 @@
 //! before seeding add this line in package.json: "type": "module",
-//! and then run in backend terminal: "yarn tsx prisma/seed"
-//! you will also need to manually hash the passwords in the database for the existing users
-//! or simply register a new user for whom this is done automatically
+//! and then run these commands in backend terminal:
+//! "yarn tsx prisma/seed"
+//! "yarn tsx prisma/hash-existing-passwords"
+//! now remove "type": "module" from package.json so you can run the server normally
 
 import { PrismaClient } from '@prisma/client';
 
@@ -15,7 +16,7 @@ async function main() {
       data: {
         email: 'jure@gmail.com',
         password: 'jure123',
-        username: 'jure',
+        username: 'Jure',
         role: 'USER',
       },
     }),
@@ -23,7 +24,7 @@ async function main() {
       data: {
         email: 'duje@gmail.com',
         password: 'duje123',
-        username: 'duje',
+        username: 'Duje',
         role: 'USER',
       },
     }),
@@ -31,7 +32,7 @@ async function main() {
       data: {
         email: 'ivona@gmail.com',
         password: 'ivona123',
-        username: 'ivona',
+        username: 'Ivona',
         role: 'ADMIN',
       },
     }),

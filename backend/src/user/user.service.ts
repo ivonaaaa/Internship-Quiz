@@ -56,7 +56,7 @@ export class UserService {
       data: {
         email,
         password: hashedPassword,
-        username: email.split('@')[0],
+        username: email.charAt(0).toUpperCase() + email.split('@')[0].slice(1),
         role: Role.USER,
       },
     });
@@ -64,6 +64,7 @@ export class UserService {
     const payload = {
       id: user.id,
       email: user.email,
+      username: user.username,
       role: 'user',
     };
 
@@ -79,16 +80,10 @@ export class UserService {
       },
     });
 
-    if (!user) {
-      throw new BadRequestException('User does not exist!');
-    }
+    if (!user) throw new BadRequestException('User does not exist!');
 
     const isPasswordValid = await compare(password, user.password);
-    console.log(isPasswordValid);
-
-    if (!isPasswordValid) {
-      throw new ForbiddenException('Password not valid!');
-    }
+    if (!isPasswordValid) throw new ForbiddenException('Password not valid!');
 
     const payload = {
       id: user.id,

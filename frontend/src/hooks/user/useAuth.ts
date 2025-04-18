@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { handleRequest } from "../../services/api";
 import { UserPayload } from "../../types/UserType";
 import { jwtDecode } from "jwt-decode";
+import { isTokenExpired } from "../../utils/auth";
 
 export const useAuth = () => {
   const [error, setError] = useState<string | null>(null);
@@ -12,9 +13,13 @@ export const useAuth = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      const decoded: UserPayload = jwtDecode(token);
-      setUser(decoded);
-      setRole(decoded.role);
+      if (isTokenExpired(token)) {
+        logout();
+      } else {
+        const decoded: UserPayload = jwtDecode(token);
+        setUser(decoded);
+        setRole(decoded.role);
+      }
     }
   }, []);
 
@@ -73,9 +78,16 @@ export const useAuth = () => {
     }
   };
 
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    setUser(null);
+    setRole(null);
+  };
+
   const getRole = () => {
     return localStorage.getItem("role");
   };
 
-  return { login, register, getRole, error, loading, role, user };
+  return { login, register, logout, getRole, error, loading, role, user };
 };
