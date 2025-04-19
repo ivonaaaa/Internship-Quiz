@@ -1,7 +1,8 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { Quiz } from "../types/QuizType";
 import { Category } from "../types/CategoryType";
 import { useNavigate } from "react-router-dom";
+import "../styles/pages/Quizzes.css";
 
 interface QuizBoxProps {
   quiz: Quiz;
@@ -17,16 +18,9 @@ const QuizBox: React.FC<QuizBoxProps> = ({ quiz, category }) => {
   };
 
   return (
-    <Box
-      sx={{
-        border: "1px solid #ddd",
-        padding: "1rem",
-        borderRadius: "8px",
-        textAlign: "center",
-      }}
-    >
-      <img src={imagePath} alt={quiz.title} width="100%" height="150px" />
-      <Typography variant="h6">{quiz.title}</Typography>
+    <Box className="quiz-box">
+      <img src={imagePath} alt={quiz.title} />
+      <h3>{quiz.title}</h3>
       <Button variant="contained" color="primary" onClick={handlePlayClick}>
         Play
       </Button>

@@ -6,6 +6,7 @@ import Navigation from "../components/Navigation";
 import QuestionCard from "../components/QuestionCard";
 import { useQuizState } from "../utils/quizUtils";
 import { Question } from "../types/QuestionType";
+import "../styles/pages/Quiz.css";
 
 const QuizPage: React.FC = () => {
   const { quizId } = useParams<{ quizId: string }>();
@@ -57,26 +58,28 @@ const QuizPage: React.FC = () => {
     return (
       <div>
         <Navigation />
-        <h1>Welcome to the Quiz!</h1>
-        <div>
-          <p>This quiz contains {questions.length} questions.</p>
-          <p>You'll have 30 seconds to answer each question.</p>
-          <p>Are you ready to begin?</p>
-        </div>
-        <div>
-          <button onClick={startQuiz}>Start Quiz</button>
-        </div>
+        <section className="quiz-content">
+          <h1>Welcome to the Quiz!</h1>
+          <div>
+            <p>This quiz contains {questions.length} questions.</p>
+            <p>You'll have 30 seconds to answer each question.</p>
+            <p>Are you ready to begin?</p>
+          </div>
+          <div>
+            <button onClick={startQuiz}>Start Quiz</button>
+          </div>
+        </section>
       </div>
     );
   }
 
   if (quizCompleted) {
     return (
-      <div>
+      <div className="quiz-results">
         <h1>Quiz Completed!</h1>
 
         {adminAttemptedSubmit && (
-          <div>
+          <div className="admin-warning">
             <p>
               As an admin, your quiz wasn't submitted. You can test the quiz
               simulation, but submissions are reserved for users.
@@ -114,7 +117,7 @@ const QuizPage: React.FC = () => {
   return (
     <div>
       <Navigation />
-      <div>
+      <div className="quiz-info">
         <span>
           Question {currentQuestionIndex + 1} of {questions.length}
         </span>

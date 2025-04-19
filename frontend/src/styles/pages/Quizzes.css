@@ -6,4 +6,34 @@
   height: 80vh;
   z-index: -1;
   object-fit: cover;
+  opacity: 0.7;
+}
+
+.quiz-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  justify-items: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.quiz-box {
+  width: 350px;
+  height: 300px;
+  border: 3px solid #636363;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.quiz-box img {
+  width: 345px;
+  height: 200px;
+  border-radius: 5px;
+}
+
+h3 {
+  font-family: "Font", sans-serif;
+  line-height: 0.5;
 }

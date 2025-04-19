@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../hooks/user/useAuth";
 import { FormBox } from "../components/FormBox";
 import { useNavigate } from "react-router-dom";
+import "../styles/pages/LoginAndRegister.css";
 
 const RegisterPage = () => {
   const { register, error, loading } = useAuth();
@@ -16,7 +17,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div>
+    <div className="form">
       <FormBox
         title="Register"
         buttonText={loading ? "Registering..." : "Register"}

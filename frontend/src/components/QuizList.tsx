@@ -10,7 +10,7 @@ interface QuizListProps {
 
 const QuizList: React.FC<QuizListProps> = ({ quizzes, categories }) => {
   return (
-    <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+    <Box className="quiz-list">
       {quizzes.map((quiz) => {
         const category = categories.find((cat) => cat.id === quiz.categoryId);
 

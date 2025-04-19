@@ -31,7 +31,11 @@ export const FormBox: React.FC<FormBoxProps> = ({
         backgroundColor: "white",
       }}
     >
-      <Typography variant="h5" textAlign="center">
+      <Typography
+        variant="h5"
+        textAlign="center"
+        sx={{ fontFamily: "Font, sans-serif" }}
+      >
         {title}
       </Typography>
       <TextField

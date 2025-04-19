@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAnswers } from "../hooks/quiz/useAnswers";
+import "../styles/pages/Quiz.css";
 
 interface QuestionCardProps {
   question: any;
@@ -48,7 +49,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           style={{
             margin: "0.5rem",
             padding: "0.5rem 1rem",
-            backgroundColor: selectedAnswer === option ? "#add8e6" : "#f0f0f0",
+            backgroundColor: selectedAnswer === option ? "#d3d3d3" : "#f0f0f0",
             color: selectedAnswer === option ? "#000" : "#333",
             fontWeight: selectedAnswer === option ? "bold" : "normal",
             border: "1px solid #ccc",
@@ -74,7 +75,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             margin: "0.5rem",
             padding: "0.5rem 1rem",
             backgroundColor:
-              selectedAnswer === option.id ? "#add8e6" : "#f0f0f0",
+              selectedAnswer === option.id ? "#d3d3d3" : "#f0f0f0",
             color: selectedAnswer === option.id ? "#000" : "#333",
             fontWeight: selectedAnswer === option.id ? "bold" : "normal",
             border: "1px solid #ccc",
@@ -82,7 +83,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             cursor: "pointer",
           }}
         >
-          <div>{option.text}</div>
+          {option.text}
         </button>
       ));
     }
@@ -94,6 +95,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           value={selectedAnswer || ""}
           onChange={(e) => handleAnswerChange(e.target.value)}
           placeholder="Type your answer here..."
+          className="input-field"
         />
       );
     }

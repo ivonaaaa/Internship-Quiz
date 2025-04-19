@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { UserPayload } from "../types/UserType";
+import "../styles/pages/Quizzes.css";
 
 interface UserProps {
   user: UserPayload;
@@ -22,6 +23,8 @@ const Headline: React.FC<UserProps> = ({ user }) => {
           top: "140px",
           left: "40px",
           color: "purple",
+          fontFamily: "Font, sans-serif",
+          fontWeight: "bold",
         }}
       >
         Welcome, {user.username}!
@@ -33,6 +36,7 @@ const Headline: React.FC<UserProps> = ({ user }) => {
           top: "220px",
           left: "40px",
           color: "pink",
+          fontFamily: "Font, sans-serif",
         }}
       >
         Feel free to explore various fun quizzes here! <br /> Whether you're a
