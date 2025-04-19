@@ -204,9 +204,9 @@ async function main() {
 
   await prisma.answer.createMany({
     data: [
-      { text: 'cheetah', isCorrect: true, questionId: q11.id },
+      { text: 'cheetah', isCorrect: false, questionId: q11.id },
       { text: 'greyhound', isCorrect: false, questionId: q11.id },
-      { text: 'peregrine falcon', isCorrect: false, questionId: q11.id },
+      { text: 'peregrine falcon', isCorrect: true, questionId: q11.id },
 
       { text: 'true', isCorrect: true, questionId: q12.id },
       { text: 'kit', isCorrect: true, questionId: q13.id },

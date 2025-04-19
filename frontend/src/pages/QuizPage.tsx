@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React from "react";
+import { useParams } from "react-router-dom";
 import { useQuizQuestions } from "../hooks/quiz/useQuestions";
 import { useSubmitQuiz } from "../hooks/quiz/useSubmitQuiz";
 import Navigation from "../components/Navigation";
 import QuestionCard from "../components/QuestionCard";
-import { jwtDecode } from "jwt-decode";
+import { useQuizState } from "../utils/quizUtils";
+import { Question } from "../types/QuestionType";
 
 const QuizPage: React.FC = () => {
   const { quizId } = useParams<{ quizId: string }>();
-  const navigate = useNavigate();
 
   const {
     questions,
     loading: questionsLoading,
     error: questionsError,
   } = useQuizQuestions(quizId || "");
+
   const {
     submit,
     loading: submitting,
@@ -22,95 +23,26 @@ const QuizPage: React.FC = () => {
     score,
   } = useSubmitQuiz();
 
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [quizCompleted, setQuizCompleted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [quizStarted, setQuizStarted] = useState(false);
-  const [userAnswers, setUserAnswers] = useState<Record<string, any>>({});
-  const [adminAttemptedSubmit, setAdminAttemptedSubmit] = useState(false);
+  const {
+    currentQuestionIndex,
+    quizCompleted,
+    timeLeft,
+    quizStarted,
+    userAnswers,
+    adminAttemptedSubmit,
+    startQuiz,
+    handleAnswerChange,
+    handleNextQuestion,
+    handleRestartQuiz,
+    handleExitQuiz,
+  } = useQuizState({
+    questions: questions as Question[],
+    quizId: quizId || "",
+    questionsLoading,
+    submit,
+  });
+
   const currentQuestion = questions[currentQuestionIndex];
-
-  useEffect(() => {
-    if (!quizStarted || quizCompleted || questionsLoading) return;
-
-    const timer = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          handleNextQuestion();
-          return 30;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [quizStarted, quizCompleted, currentQuestionIndex, questionsLoading]);
-
-  useEffect(() => {
-    setTimeLeft(30);
-    setSelectedAnswer(null);
-  }, [currentQuestionIndex]);
-
-  const startQuiz = () => {
-    setQuizStarted(true);
-  };
-
-  const handleAnswerChange = (questionId: string, answer: any) => {
-    setUserAnswers((prev) => ({ ...prev, [questionId]: answer }));
-    setSelectedAnswer(answer);
-  };
-
-  const handleNextQuestion = () => {
-    if (currentQuestion && selectedAnswer !== null) {
-      setUserAnswers((prev) => ({
-        ...prev,
-        [currentQuestion.id]: selectedAnswer,
-      }));
-    }
-
-    if (currentQuestionIndex < questions.length - 1)
-      setCurrentQuestionIndex((prev) => prev + 1);
-    else handleQuizSubmit();
-  };
-
-  const handleQuizSubmit = async () => {
-    setQuizCompleted(true);
-
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("No authentication token found!");
-
-      const decodedToken: { id: string; role: string } = jwtDecode(token);
-      const userId = decodedToken.id;
-      if (!userId) throw new Error("User ID not found in token!");
-
-      const userRole = decodedToken.role;
-      if (userRole === "ADMIN") setAdminAttemptedSubmit(true);
-
-      const submitData = {
-        userId,
-        answers: userAnswers,
-      };
-
-      await submit(quizId || "", submitData, token);
-    } catch (error) {
-      console.error("Error handling quiz submission:", error);
-    }
-  };
-
-  const handleRestartQuiz = () => {
-    setCurrentQuestionIndex(0);
-    setSelectedAnswer(null);
-    setUserAnswers({});
-    setQuizCompleted(false);
-    setTimeLeft(30);
-    setQuizStarted(false);
-  };
-
-  const handleExitQuiz = () => {
-    navigate("/");
-  };
 
   if (questionsError) {
     return (
@@ -146,8 +78,8 @@ const QuizPage: React.FC = () => {
         {adminAttemptedSubmit && (
           <div>
             <p>
-              As an admin, your quiz wasn't submitted. You can test the quizzes
-              and see your scores, but submissions are reserved for users.
+              As an admin, your quiz wasn't submitted. You can test the quiz
+              simulation, but submissions are reserved for users.
             </p>
           </div>
         )}
@@ -162,8 +94,9 @@ const QuizPage: React.FC = () => {
               <div>
                 <div>Your score: {score}%</div>
                 <p>
-                  You answered {Math.round((score / 100) * questions.length)}{" "}
-                  out of {questions.length} questions correctly!
+                  You answered{" "}
+                  {Math.round(((score ?? 0) / 100) * (questions.length || 1))}{" "}
+                  out of {questions.length || 1} questions correctly!
                 </p>
               </div>
             )}
@@ -192,7 +125,7 @@ const QuizPage: React.FC = () => {
       <div>
         <QuestionCard
           question={currentQuestion}
-          initialAnswer={userAnswers[currentQuestion.id]}
+          initialAnswer={userAnswers[currentQuestion?.id]}
           onAnswerChange={handleAnswerChange}
           onNext={handleNextQuestion}
           onExit={handleExitQuiz}

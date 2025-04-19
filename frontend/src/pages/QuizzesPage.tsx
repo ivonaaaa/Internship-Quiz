@@ -17,6 +17,11 @@ import { useQuizzesByCategory } from "../hooks/quiz/useQuizzesByCategory";
 import { useCategories } from "../hooks/category/useCategories";
 import { useAuth } from "../hooks/user/useAuth";
 import { Quiz } from "../types/QuizType";
+import {
+  filterQuizzesBySearchQuery,
+  getQuizzesToShow,
+  handleCategorySelection,
+} from "../utils/quizzesUtils";
 import "../styles/pages/Quizzes.css";
 
 const QuizzesPage = () => {
@@ -46,21 +51,20 @@ const QuizzesPage = () => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = (categoryId?: string) => {
-    setAnchorEl(null);
-    if (categoryId) setSearchParams({ category: categoryId });
-    else setSearchParams({});
+    handleCategorySelection(setAnchorEl, setSearchParams, categoryId);
   };
 
-  const quizzesToShow: Quiz[] =
-    categoryId && categoryQuizzes.length > 0
-      ? categoryQuizzes
-      : !categoryId
-      ? allQuizzes
-      : [];
+  const quizzesToShow: Quiz[] = getQuizzesToShow(
+    categoryId,
+    categoryQuizzes,
+    allQuizzes
+  );
 
-  const filteredQuizzes: Quiz[] = quizzesToShow.filter((quiz) =>
-    quiz.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredQuizzes: Quiz[] = filterQuizzesBySearchQuery(
+    quizzesToShow,
+    searchQuery
   );
 
   const isLoading = categoryId ? loadingCategory : loadingAll;

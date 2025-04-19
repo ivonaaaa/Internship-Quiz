@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { handleRequest } from "../../services/api";
 import { UserPayload } from "../../types/UserType";
 import { jwtDecode } from "jwt-decode";
-import { isTokenExpired } from "../../utils/auth";
+import { isTokenExpired } from "../../utils/authUtils";
 
 export const useAuth = () => {
   const [error, setError] = useState<string | null>(null);
