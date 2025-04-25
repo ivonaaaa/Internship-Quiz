@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { fetchAnswers } from "../../services/quizApi";
+import { fetchAnswers } from "../../api/services/quizApi";
+import { Answer } from "../../types/AnswerType";
 
 export const useAnswers = (questionId: string) => {
-  const [answers, setAnswers] = useState([]);
+  const [answers, setAnswers] = useState<Answer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -12,7 +13,7 @@ export const useAnswers = (questionId: string) => {
     const loadAnswers = async () => {
       try {
         const data = await fetchAnswers(questionId);
-        setAnswers(data);
+        setAnswers(data as Answer[]);
       } catch (err) {
         setError("Failed to load answers!");
       } finally {

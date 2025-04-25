@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchAllUserQuizAttempts } from "../../services/userApi";
+import { fetchAllUserQuizAttempts } from "../../api/services/userApi";
 import { UserQuizAttempt } from "../../types/UserQuizAttempt";
 
 export const useAllUserQuizAttempts = () => {
@@ -11,7 +11,7 @@ export const useAllUserQuizAttempts = () => {
     const fetchAttempts = async () => {
       try {
         setLoading(true);
-        const data = await fetchAllUserQuizAttempts();
+        const data = (await fetchAllUserQuizAttempts()) as UserQuizAttempt[];
         setAttempts(data);
       } catch (err) {
         setError(err as Error);

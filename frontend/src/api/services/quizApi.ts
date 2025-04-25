@@ -1,5 +1,5 @@
-import { Quiz } from "../types/QuizType";
-import { handleRequest } from "./api";
+import { Quiz } from "../../types/QuizType";
+import { handleRequest } from "../api";
 
 export const fetchQuizzes = async () => {
   return await handleRequest("quiz", "GET", {});
@@ -13,7 +13,7 @@ export const fetchQuizzesByCategory = async (
       ? "quiz"
       : `quiz/category/${categoryId}`;
 
-  return await handleRequest(endpoint, "GET", {});
+  return await handleRequest(endpoint, "GET");
 };
 
 export const fetchQuizzesByName = async (name: string) => {
@@ -32,14 +32,10 @@ export const fetchQuizResults = async (quizId: string) => {
   return await handleRequest(`quiz/${quizId}/results`, "GET", {});
 };
 
-export const submitQuiz = async (
-  quizId: string,
-  answers: any,
-  token: string
-) => {
-  return await handleRequest(`quiz/${quizId}/submit`, "POST", answers, token);
+export const submitQuiz = async (quizId: string, answers: any) => {
+  return await handleRequest(`quiz/${quizId}/submit`, "POST", answers);
 };
 
-export const createQuiz = async (quizData: any, token: string) => {
-  return await handleRequest("quiz", "POST", quizData, token);
+export const createQuiz = async (quizData: any) => {
+  return await handleRequest("quiz", "POST", quizData);
 };

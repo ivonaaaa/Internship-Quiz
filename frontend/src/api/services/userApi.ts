@@ -1,4 +1,4 @@
-import { handleRequest } from "./api";
+import { handleRequest } from "../api";
 
 export const fetchUsers = async () => {
   return await handleRequest("user", "GET", {});

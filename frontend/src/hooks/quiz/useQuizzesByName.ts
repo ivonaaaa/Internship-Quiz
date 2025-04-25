@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { fetchQuizzesByName } from "../../services/quizApi";
+import { fetchQuizzesByName } from "../../api/services/quizApi";
+import { Quiz } from "../../types/QuizType";
 
 export const useQuizzesByName = (name: string) => {
-  const [quizzes, setQuizzes] = useState([]);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +16,7 @@ export const useQuizzesByName = (name: string) => {
 
     const searchQuizzes = async () => {
       try {
-        const data = await fetchQuizzesByName(name);
+        const data = (await fetchQuizzesByName(name)) as Quiz[];
         setQuizzes(data);
       } catch (err) {
         setError("Failed to search quizzes!");

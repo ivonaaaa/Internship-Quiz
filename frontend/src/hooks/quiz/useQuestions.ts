@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
-import { fetchQuizQuestions } from "../../services/quizApi";
+import { fetchQuizQuestions } from "../../api/services/quizApi";
 import { Question } from "../../types/QuestionType";
+
+interface QuizQuestionsResponse {
+  questions: Question[];
+}
 
 export const useQuizQuestions = (quizId: string) => {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -15,7 +19,7 @@ export const useQuizQuestions = (quizId: string) => {
 
         if (Array.isArray(data)) setQuestions(data);
         else if (data && typeof data === "object") {
-          const questionsArray = data.questions || [];
+          const questionsArray = (data as QuizQuestionsResponse).questions;
           setQuestions(Array.isArray(questionsArray) ? questionsArray : []);
         } else {
           setQuestions([]);

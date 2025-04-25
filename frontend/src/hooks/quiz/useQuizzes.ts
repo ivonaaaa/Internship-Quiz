@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchQuizzes } from "../../services/quizApi";
+import { fetchQuizzes } from "../../api/services/quizApi";
 import { Quiz } from "../../types/QuizType";
 
 export const useQuizzes = () => {
@@ -10,7 +10,7 @@ export const useQuizzes = () => {
   useEffect(() => {
     const loadQuizzes = async () => {
       try {
-        const data = await fetchQuizzes();
+        const data = (await fetchQuizzes()) as Quiz[];
         setQuizzes(data);
       } catch (err) {
         setError("Failed to load quizzes!");

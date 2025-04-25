@@ -1,22 +1,25 @@
 import { useEffect, useState } from "react";
-import { handleRequest } from "../../services/api";
-import { UserPayload } from "../../types/UserType";
+import { handleRequest } from "../../api/api";
+import { User } from "../../types/UserType";
 import { jwtDecode } from "jwt-decode";
 import { isTokenExpired } from "../../utils/authUtils";
+
+interface AuthResponse {
+  token: string;
+}
 
 export const useAuth = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [role, setRole] = useState<string | null>(localStorage.getItem("role"));
-  const [user, setUser] = useState<UserPayload | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      if (isTokenExpired(token)) {
-        logout();
-      } else {
-        const decoded: UserPayload = jwtDecode(token);
+      if (isTokenExpired(token)) logout();
+      else {
+        const decoded: User = jwtDecode(token);
         setUser(decoded);
         setRole(decoded.role);
       }
@@ -28,14 +31,15 @@ export const useAuth = () => {
     setError(null);
 
     try {
-      const data = await handleRequest("user/login", "POST", {
+      const data = (await handleRequest("user/login", "POST", {
         email,
         password,
-      });
+      })) as AuthResponse;
+
       const { token } = data;
       localStorage.setItem("token", token);
 
-      const decoded: UserPayload = jwtDecode(token);
+      const decoded: User = jwtDecode(token);
       localStorage.setItem("role", decoded.role);
       setRole(decoded.role);
       setUser(decoded);
@@ -45,7 +49,7 @@ export const useAuth = () => {
       if (err instanceof Error) setError(err.message);
       else setError("An unknown error occurred!");
 
-      return { success: false, error };
+      return { success: false, error: error };
     } finally {
       setLoading(false);
     }
@@ -56,14 +60,15 @@ export const useAuth = () => {
     setError(null);
 
     try {
-      const data = await handleRequest("user/register", "POST", {
+      const data = (await handleRequest("user/register", "POST", {
         email,
         password,
-      });
+      })) as AuthResponse;
+
       const { token } = data;
       localStorage.setItem("token", token);
 
-      const decoded: UserPayload = jwtDecode(token);
+      const decoded: User = jwtDecode(token);
       localStorage.setItem("role", decoded.role);
       setRole(decoded.role);
       setUser(decoded);
@@ -72,7 +77,7 @@ export const useAuth = () => {
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message);
       else setError("An unknown error occurred");
-      return { success: false, error };
+      return { success: false, error: error };
     } finally {
       setLoading(false);
     }

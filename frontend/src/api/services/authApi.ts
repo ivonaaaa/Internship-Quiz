@@ -1,4 +1,4 @@
-import { handleRequest } from "./api";
+import { handleRequest } from "../api";
 
 export const loginUser = async (email: string, password: string) => {
   return await handleRequest("user/login", "POST", { email, password });
