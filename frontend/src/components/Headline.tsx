@@ -1,9 +1,9 @@
 import { Box, Typography } from "@mui/material";
-import { UserPayload } from "../types/UserType";
+import { User } from "../types/UserType";
 import "../styles/pages/Quizzes.css";
 
 interface UserProps {
-  user: UserPayload;
+  user: User;
 }
 
 const Headline: React.FC<UserProps> = ({ user }) => {

@@ -2,12 +2,16 @@ import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { Question } from "../types/QuestionType";
+import { QuizResult } from "../types/QuizResultType";
 
 export interface QuizStateProps {
   questions: Question[];
   quizId: string;
   questionsLoading: boolean;
-  submit: (quizId: string, data: any, token: string) => Promise<void>;
+  submit: (
+    quizId: string,
+    data: { userId: string; answers: Record<string, any> }
+  ) => Promise<QuizResult>;
 }
 
 export const useQuizState = ({
@@ -90,7 +94,7 @@ export const useQuizState = ({
         answers: userAnswers,
       };
 
-      await submit(quizId, submitData, token);
+      await submit(quizId, submitData);
     } catch (error) {
       console.error("Error submitting quiz:", error);
     }

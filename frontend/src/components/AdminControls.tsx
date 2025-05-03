@@ -52,7 +52,7 @@ const AdminControls = () => {
     if (!categoryName.trim() || !image.trim()) return;
     const token = localStorage.getItem("token");
     if (!token) return;
-    await createCategory({ name: categoryName, image }, token);
+    await createCategory({ name: categoryName, image });
     setCategoryName("");
     setImage("");
     window.location.reload();
@@ -222,7 +222,7 @@ const AdminControls = () => {
       categoryId: quizCategory,
       questions: transformedQuestions,
     };
-    await createQuiz(quizData, token);
+    await createQuiz(quizData);
     setQuizTitle("");
     setQuizCategory("");
     setQuestions([

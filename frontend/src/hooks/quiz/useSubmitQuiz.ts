@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { submitQuiz } from "../../api/services/quizApi";
-
-interface QuizSubmissionResult {
-  score: number;
-  userId: string;
-  quizId: string;
-}
+import { QuizResult } from "../../types/QuizResultType";
 
 export const useSubmitQuiz = () => {
   const [loading, setLoading] = useState(false);
@@ -15,15 +10,12 @@ export const useSubmitQuiz = () => {
   const submit = async (
     quizId: string,
     submitData: { userId: string; answers: Record<string, any> }
-  ): Promise<QuizSubmissionResult> => {
+  ): Promise<QuizResult> => {
     setLoading(true);
     setError(null);
 
     try {
-      const result = (await submitQuiz(
-        quizId,
-        submitData
-      )) as QuizSubmissionResult;
+      const result = (await submitQuiz(quizId, submitData)) as QuizResult;
       setScore(result.score || 0);
       return result;
     } catch (err) {
