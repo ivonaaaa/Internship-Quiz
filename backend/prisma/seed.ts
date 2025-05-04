@@ -1,9 +1,3 @@
-//! before seeding add this line in package.json: "type": "module",
-//! and then run these commands in backend terminal:
-//! "yarn tsx prisma/seed"
-//! "yarn tsx prisma/hash-existing-passwords"
-//! now remove "type": "module" from package.json so you can run the server normally
-
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
